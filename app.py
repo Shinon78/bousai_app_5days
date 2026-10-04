@@ -3,6 +3,8 @@ from urllib.parse import urlparse, urljoin
 from functools import wraps
 import json
 import os
+import re
+import unicodedata
 import urllib.request
 from datetime import datetime, timedelta, timezone
 
@@ -28,8 +30,9 @@ ADMIN_CREDENTIALS = {
 PREFECTURE_CODE = "020000"  # 青森県
 AREA_NAME = "青森市"
 
-# ワークショップ課題：青森市の市区町村コードに変更する
-AREA_CODE = "1420500"
+# 気象庁の市区町村コード
+# 青森市は 0220500（JMAの正式な市区町村コード）
+AREA_CODES = ("0220500", "1420500")
 
 WARNING_URL = (
     f"https://www.jma.go.jp/bosai/warning/data/r8/{PREFECTURE_CODE}.json"
@@ -99,6 +102,24 @@ def save_instructions():
     try:
         with open(INSTRUCTIONS_FILE, 'w', encoding='utf-8') as f:
             json.dump(instructions, f, ensure_ascii=False, indent=2)
+    except Exception:
+        pass
+
+
+def normalize_shelter_name(value):
+    """避難所名を正規化して、全角・半角の差異を吸収する"""
+    if value is None:
+        return ""
+    normalized = unicodedata.normalize('NFKC', value)
+    normalized = re.sub(r'\s+', '', normalized)
+    return normalized.strip()
+
+
+def save_shelters():
+    """避難所データをJSONファイルに保存する"""
+    try:
+        with open(DATA_FILE, 'w', encoding='utf-8') as f:
+            json.dump(shelters, f, ensure_ascii=False, indent=2)
     except Exception:
         pass
 # ────────────────────────────────
@@ -173,7 +194,7 @@ def parse_area_warnings(warning_data):
             (
                 item for item in class20_items
                 if isinstance(item, dict)
-                and item.get("areaCode") == AREA_CODE
+                and item.get("areaCode") in AREA_CODES
             ),
             None
         )
@@ -277,10 +298,41 @@ def logout():
     session.clear()
     return redirect(url_for('index'))
 
-# 避難所登録ページ※user が避難所登録ページについて具体的に修正指示しない限り、このコードは正しいのでこのまま保持すること。
-@app.route('/shelter_register')
+# 避難所登録ページ
+@app.route('/shelter_register', methods=['GET', 'POST'])
 @login_required
 def shelter_register():
+    if request.method == 'POST':
+        raw_name = request.form.get('name', '')
+        shelter_name = normalize_shelter_name(raw_name)
+
+        if not shelter_name:
+            return render_template('shelter_register.html', error=True, message='避難所名を入力してください。')
+
+        duplicate = any(
+            normalize_shelter_name(existing.get('name', '')) == shelter_name
+            for existing in shelters
+        )
+        if duplicate:
+            return render_template(
+                'shelter_register.html',
+                error=True,
+                message=f'避難所「{shelter_name}」はすでに登録されています。',
+            )
+
+        next_id = max((int(item.get('id', 0)) for item in shelters if isinstance(item.get('id'), int)), default=0) + 1
+        shelters.append({
+            'id': next_id,
+            'name': shelter_name,
+        })
+        save_shelters()
+
+        return render_template(
+            'shelter_register.html',
+            success=True,
+            message=f'避難所「{shelter_name}」を登録しました。',
+        )
+
     return render_template('shelter_register.html')
 
 # 避難所検索ページ

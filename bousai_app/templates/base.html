@@ -4,31 +4,146 @@
   <meta charset="utf-8">
   <title>{% block title %}防災アプリ{% endblock %}</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --navy: #0a3f78;
+      --navy-deep: #083867;
+      --sky: #dfeef8;
+      --panel-bg: #f4f6f8;
+      --card-bg: #edf2f5;
+      --line: #d7dde2;
+      --text: #1f2d3d;
+      --muted: #5f6d7d;
+      --success: #2e9d68;
+      --shadow: 0 8px 18px rgba(18, 41, 63, 0.09);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", "Hiragino Sans", "Yu Gothic", sans-serif;
+      background: #eef1f3;
+      color: var(--text);
+    }
+
+    .topbar {
+      background: linear-gradient(90deg, var(--navy) 0%, var(--navy-deep) 100%);
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 26px;
+      box-shadow: 0 2px 0 rgba(0, 0, 0, 0.06);
+    }
+
+    .brand {
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 2rem;
+      letter-spacing: 0.04em;
+      margin-left: 8px;
+    }
+
+    .menu-button {
+      width: 42px;
+      height: 42px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.04);
+      color: #ffffff;
+      font-size: 1.8rem;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    .main-wrap {
+      max-width: 980px;
+      margin: 28px auto 40px;
+      padding: 0 18px;
+    }
+
+    .content-card {
+      background: rgba(255, 255, 255, 0.18);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      padding: 22px 18px 18px;
+      background-color: #f3f5f7;
+    }
+
+    .content-card + .content-card {
+      margin-top: 24px;
+    }
+
+    .top-nav {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      font-size: 0.93rem;
+      color: var(--muted);
+      margin-top: 12px;
+      margin-bottom: 18px;
+    }
+
+    .top-nav a {
+      color: var(--navy);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .status-inline {
+      color: var(--muted);
+      margin-left: auto;
+      font-size: 0.9rem;
+    }
+
+    .status-inline a {
+      color: var(--navy);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    @media (max-width: 700px) {
+      .brand {
+        font-size: 1.5rem;
+      }
+
+      .topbar {
+        padding: 0 16px;
+      }
+    }
+  </style>
 </head>
 <body>
-  <!-- ヘッダー -->
-  <h1>防災アプリ</h1>
+  <header class="topbar">
+    <div class="brand">防災アプリ</div>
+    <button class="menu-button" aria-label="メニュー">☰</button>
+  </header>
 
-  <!-- ナビゲーション -->
-  <nav>
-    <a href="/">ホーム</a> |
-    <a href="/shelter_search">避難所検索</a> |
-    <a href="/shelter_register">避難所登録</a> |
-    <a href="/board">指示・発信ボード</a>
-    ｜
-    {% if session.logged_in %}
-      ログイン中{% if session.username %}（{{ session.username }}）{% endif %}
-      <a href="/logout">ログアウト</a>
-    {% else %}
-      未ログイン
-      <a href="/login">ログイン</a>
-    {% endif %}
-  </nav>
-  <hr>
+  <div class="main-wrap">
+    <nav class="top-nav" aria-label="メインナビゲーション">
+      <a href="/">ホーム</a>
+      <span>|</span>
+      <a href="/shelter_search">避難所検索</a>
+      <span>|</span>
+      <a href="/shelter_register">避難所登録</a>
+      <span>|</span>
+      <a href="/board">指示・発信ボード</a>
+      <div class="status-inline">
+        {% if session.logged_in %}
+          {{ session.username or '管理者' }}
+          <a href="/logout">ログアウト</a>
+        {% else %}
+          <a href="/login">ログイン</a>
+        {% endif %}
+      </div>
+    </nav>
 
-  <main>
-    <!-- ここに子テンプレートの content が入る -->
-    {% block content %}{% endblock %}
-  </main>
+    <main>
+      {% block content %}{% endblock %}
+    </main>
+  </div>
 </body>
 </html>
