@@ -1,8 +1,89 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>避難所検索</h2>
-<p>登録されている避難所を確認できます。</p>
+<div class="search-form-box">
+  <h2>避難所検索</h2>
+  <p>地区名やキーワードから、避難所をすばやく探せます。</p>
 
-<p><a href="/all_shelters">全施設一覧</a></p>
+  <form method="get" action="/search_results" class="search-form">
+    <div class="field-group">
+      <label for="district">地区</label>
+      <select id="district" name="district">
+        <option value="">全地区</option>
+        <option value="青森市">青森市</option>
+      </select>
+    </div>
+
+    <div class="field-group">
+      <label for="keyword">キーワード</label>
+      <input type="text" id="keyword" name="keyword" placeholder="例: 小学校、体育館" />
+    </div>
+
+    <button type="submit">検索する</button>
+  </form>
+
+  <div class="search-links">
+    <a href="/all_shelters">全施設一覧</a>
+  </div>
+</div>
+
+<style>
+  .search-form-box {
+    max-width: 760px;
+    margin: 24px auto;
+    background: #ffffff;
+    border: 1px solid #dfe6ee;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 8px 18px rgba(18, 41, 63, 0.06);
+  }
+  .search-form-box h2 {
+    margin-top: 0;
+    color: #123b68;
+  }
+  .search-form {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr auto;
+    gap: 16px;
+    margin-top: 20px;
+  }
+  .field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .field-group label {
+    font-weight: 700;
+    color: #35506d;
+  }
+  .field-group input, .field-group select {
+    padding: 12px 14px;
+    border: 1px solid #cfd9e4;
+    border-radius: 10px;
+    font-size: 1rem;
+  }
+  .search-form button {
+    align-self: end;
+    border: none;
+    background: linear-gradient(90deg, #0e5ba8, #1a73c7);
+    color: #fff;
+    font-weight: 700;
+    border-radius: 10px;
+    padding: 12px 20px;
+    cursor: pointer;
+  }
+  .search-links {
+    margin-top: 20px;
+  }
+  .search-links a {
+    color: #0d4d8a;
+    font-weight: 700;
+    text-decoration: none;
+  }
+  @media (max-width: 760px) {
+    .search-form {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
 {% endblock %}

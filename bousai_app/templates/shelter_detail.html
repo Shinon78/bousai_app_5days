@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="detail-container">
+  <div class="detail-header">
+    <div>
+      <p class="eyebrow">避難所詳細</p>
+      <h2>{{ shelter.name }}</h2>
+    </div>
+    <a class="back-link" href="/search_results">一覧へ戻る</a>
+  </div>
+
+  <div class="detail-card">
+    <div class="info-row">
+      <span class="label">住所</span>
+      <span>{{ shelter.address or '住所未登録' }}</span>
+    </div>
+    <div class="info-row">
+      <span class="label">地区</span>
+      <span>{{ shelter.district or '未設定' }}</span>
+    </div>
+    <div class="info-row">
+      <span class="label">混雑状況</span>
+      <span class="badge badge-{{ (shelter.crowd_status or '空きあり')|replace(' ', '') }}">{{ shelter.crowd_status or '空きあり' }}</span>
+    </div>
+    <div class="info-row">
+      <span class="label">開館状況</span>
+      <span class="badge badge-{{ 'open' if shelter.open_status == '開館中' else 'paused' if shelter.open_status == '休止中' else 'closed' }}">{{ shelter.open_status or '開館中' }}</span>
+    </div>
+
+    <div class="feature-block">
+      <h3>設備・特徴</h3>
+      <div class="feature-list">
+        {% if shelter.wheelchair %}<span class="feature on">♿ 車いす対応</span>{% endif %}
+        {% if shelter.baby %}<span class="feature on">🍼 ベビー向け</span>{% endif %}
+        {% if shelter.pet %}<span class="feature on">🐾 ペット対応</span>{% endif %}
+        {% if not shelter.wheelchair and not shelter.baby and not shelter.pet %}
+          <span class="feature off">特記の設備はありません</span>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="note-block">
+      <h3>備考</h3>
+      <p>{{ shelter.note or '特記事項はありません。' }}</p>
+    </div>
+  </div>
+</div>
+
+<style>
+  .detail-container {
+    max-width: 900px;
+    margin: 24px auto;
+    padding: 0 16px;
+  }
+  .detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  .eyebrow {
+    margin: 0 0 8px;
+    color: #4d6380;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .detail-header h2 {
+    margin: 0;
+    color: #123b68;
+    font-size: 2rem;
+  }
+  .back-link {
+    color: #0d4d8a;
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .detail-card {
+    background: #ffffff;
+    border: 1px solid #dfe6ee;
+    border-radius: 16px;
+    box-shadow: 0 8px 18px rgba(18, 41, 63, 0.07);
+    padding: 24px;
+  }
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    border-bottom: 1px solid #edf1f5;
+    padding: 14px 0;
+  }
+  .info-row .label {
+    color: #4a5c71;
+    font-weight: 700;
+    min-width: 120px;
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 0.82rem;
+  }
+  .badge空きあり { background: #eaf7ff; color: #0d66b5; }
+  .badgeやや混雑 { background: #fff4db; color: #a46a00; }
+  .badge混雑 { background: #ffe5e5; color: #b92323; }
+  .badgeopen { background: #e9fbea; color: #1d7b43; }
+  .badgepaused { background: #fff4db; color: #995d00; }
+  .badgeclosed { background: #eef2f6; color: #59697e; }
+  .feature-block, .note-block {
+    margin-top: 24px;
+  }
+  .feature-block h3, .note-block h3 {
+    color: #123b68;
+    margin-bottom: 12px;
+  }
+  .feature-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .feature {
+    padding: 8px 12px;
+    border-radius: 10px;
+    background: #edf4fb;
+    color: #214a78;
+    font-weight: 600;
+  }
+  .feature.off {
+    background: #f0f3f6;
+    color: #59697e;
+  }
+  .note-block p {
+    margin: 0;
+    color: #2b3f52;
+    line-height: 1.8;
+  }
+</style>
+{% endblock %}

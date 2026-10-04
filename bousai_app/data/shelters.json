@@ -1,18 +1,47 @@
 [
   {
     "id": 1,
-    "name": "御所見小学校"
+    "name": "御所見小学校",
+    "district": "青森市",
+    "address": "青森市大字御所見字山田1-1",
+    "latitude": 40.8245,
+    "longitude": 140.7412,
+    "wheelchair": true,
+    "baby": true,
+    "pet": false,
+    "crowd_status": "空きあり",
+    "open_status": "開館中",
+    "is_open": true,
+    "note": "体育館と給食室を活用できる。"
   },
   {
     "id": 2,
-    "name": "片瀬小学校"
+    "name": "片瀬小学校",
+    "district": "青森市",
+    "address": "青森市片瀬1丁目2-15",
+    "latitude": 40.8172,
+    "longitude": 140.7581,
+    "wheelchair": true,
+    "baby": false,
+    "pet": true,
+    "crowd_status": "やや混雑",
+    "open_status": "休止中",
+    "is_open": false,
+    "note": "住民の受け付けスペースが広い。"
   },
   {
     "id": 5,
-    "name": "鵠洋小学校"
-  },
-  {
-    "id": 6,
-    "name": "あいうえお"
+    "name": "鵠洋小学校",
+    "district": "青森市",
+    "address": "青森市大字鵠ケ谷1-10",
+    "latitude": 40.8087,
+    "longitude": 140.7089,
+    "wheelchair": false,
+    "baby": true,
+    "pet": true,
+    "crowd_status": "混雑",
+    "open_status": "閉鎖中",
+    "is_open": false,
+    "note": "多目的スペースがあり、車いす対応は要確認。"
   }
 ]

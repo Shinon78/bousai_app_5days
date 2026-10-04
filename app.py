@@ -346,6 +346,14 @@ def all_shelters():
     return render_template('search_results.html', results=shelters)
 
 
+@app.route('/shelter_detail/<int:shelter_id>')
+def shelter_detail(shelter_id):
+    shelter = next((item for item in shelters if int(item.get('id')) == shelter_id), None)
+    if shelter is None:
+        return render_template('search_results.html', results=shelters, error='指定された避難所は見つかりませんでした。')
+    return render_template('shelter_detail.html', shelter=shelter)
+
+
 # 指示ボード：住民向けの指示を一覧で確認する
 @app.route('/board')
 @login_required
@@ -356,8 +364,18 @@ def board():
 # 検索結果ページ：templates/search_results.html を返す
 @app.route('/search_results')
 def search_results():
-    results = filter_shelters(request.args.get('district'))
-    return render_template('search_results.html', results=results)
+    district = request.args.get('district')
+    keyword = request.args.get('keyword', '').strip()
+    results = filter_shelters(district)
+
+    if keyword:
+        keyword_norm = keyword.lower()
+        results = [
+            s for s in results
+            if keyword_norm in (s.get('name', '') + s.get('district', '') + s.get('address', '')).lower()
+        ]
+
+    return render_template('search_results.html', results=results, district=district, keyword=keyword)
 
 # JSON API：/shelters?district=地区名
 @app.route('/shelters', methods=['GET'])
